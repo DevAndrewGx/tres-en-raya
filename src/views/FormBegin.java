@@ -4,6 +4,8 @@
  */
 package views;
 
+import controller.Jugador;
+import controller.TipoImagen;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
@@ -156,6 +158,9 @@ public class FormBegin extends javax.swing.JFrame {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 panelBotonMouseExited(evt);
             }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                panelBotonMousePressed(evt);
+            }
         });
 
         lblInicio.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 20)); // NOI18N
@@ -304,6 +309,32 @@ public class FormBegin extends javax.swing.JFrame {
     private void panelBotonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelBotonMouseExited
         panelBoton.setBackground(new Color(42, 22, 79));
     }//GEN-LAST:event_panelBotonMouseExited
+
+    private void panelBotonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelBotonMousePressed
+        this.dispose();
+        
+        Jugador jugador1 = new Jugador(TipoImagen.EQUIS);
+        if(txtJugador1.getText().equals("")) {
+            jugador1.setNombre("JUGADOR1");
+        }else {
+            jugador1.setNombre(txtJugador1.getText());
+        }
+        
+        
+        Jugador jugador2 = new Jugador(TipoImagen.CIRCULO);
+        if(txtJugador2.getText().equals("")) {
+            jugador2.setNombre("JUGADOR2");
+        }else {
+            jugador2.setNombre(txtJugador2.getText());
+        }
+        
+        
+        
+        FormTikTacToe tikTacToe;
+        tikTacToe = new FormTikTacToe(jugador1, jugador2);
+        tikTacToe.setVisible(true);
+        
+    }//GEN-LAST:event_panelBotonMousePressed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
