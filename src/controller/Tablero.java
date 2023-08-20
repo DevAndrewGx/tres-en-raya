@@ -16,25 +16,26 @@ import views.FormTikTacToe;
  *
  * @author Andrey
  */
-public class Tablero extends JPanel{
-    private int anchoCI; 
+public class Tablero extends JPanel {
+
+    private int anchoCI;
     private int alturaCI;
     private int margen;
-    private Color colorTablero; 
+    private Color colorTablero;
     private Color colorCI;
-    
+
     private TipoImagen jugadorActual;
-    
+
     private Jugador jugador1;
     private Jugador jugador2;
-    
-    
+
     private ArrayList<Cuadro> cuadros;
-    
+    private Cuadro cuadroFrontal;
+
     public Tablero() {
         init();
     }
-    
+
     private void init() {
         anchoCI = 80;
         alturaCI = 80;
@@ -42,108 +43,137 @@ public class Tablero extends JPanel{
         colorTablero = Color.RED;
         margen = 6;
         jugador1 = new Jugador();
-        jugador2 = new Jugador();  
+        jugador2 = new Jugador();
         cuadros = new ArrayList();
-        jugadorActual = TipoImagen.EQUIS; 
+        jugadorActual = TipoImagen.EQUIS;
     }
-    
+
     public void crearTablero() {
         setLayout(null);
-        setSize(anchoCI *3 +margen* 4, alturaCI*3+margen*4);
+        setSize(anchoCI * 3 + margen * 4, alturaCI * 3 + margen * 4);
         setBackground(colorTablero);
+        cuadroFrontal = new Cuadro(this.getWidth(), this.getHeight(), Color.RED);
+        cuadroFrontal.setLocation(0,0);
+        cuadroFrontal.setOpaque(false);
+        cuadroFrontal.setEnabled(false);
+        add(cuadroFrontal);
         crearCuadrosInternos();
+        
     }
-    
+
     private void crearCuadrosInternos() {
-        int x =  margen;
+        int x = margen;
         int y = margen;
-        
-        
-        for(int i = 0; i<3; i++) {
-            
-            x = margen;   
-            for(int j = 0; j<3; j++) {
+
+        for (int i = 0; i < 3; i++) {
+
+            x = margen;
+            for (int j = 0; j < 3; j++) {
                 Cuadro cuadro = new Cuadro(anchoCI, alturaCI, colorCI);
                 cuadro.setCursor(new Cursor(Cursor.HAND_CURSOR) {
                 });
                 cuadro.setLocation(x, y);
+                cuadro.setI(i);
+                cuadro.setJ(j);
                 add(cuadro);
-                
+
                 cuadros.add(cuadro);
-                
+
                 crearEventosCuadros(cuadro);
                 x += (anchoCI + margen);
-                
+
             }
-            y += (alturaCI+margen);
+            y += (alturaCI + margen);
         }
     }
-    
-    
+
     public void crearEventosCuadros(Cuadro cuadro) {
         MouseListener evento = new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {  throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            public void mouseClicked(MouseEvent e) {
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                
-                
-                if(cuadro.isDibujado()) return;
-                
-                if(jugadorActual == TipoImagen.EQUIS) {
+
+                if (cuadro.isDibujado()) {
+                    return;
+                }
+
+                TipoImagen tipoImagenResultado = null;
+
+                if (jugadorActual == TipoImagen.EQUIS) {
                     cuadro.setTipoImagen(TipoImagen.EQUIS);
+                    jugador1.getTablero()[cuadro.getI()][cuadro.getJ()] = 1;
+                    tipoImagenResultado = jugador1.tresEnRaya(jugador2);
+
+                    resultado(tipoImagenResultado , TipoImagen.EQUIS);
                     jugadorActual = TipoImagen.CIRCULO;
                     cambiarEstilos(TipoImagen.CIRCULO);
-                }else if(jugadorActual == TipoImagen.CIRCULO) {
-                    
+                } else if (jugadorActual == TipoImagen.CIRCULO) {
                     cuadro.setTipoImagen(TipoImagen.CIRCULO);
-                    jugadorActual = TipoImagen.EQUIS; 
+                    jugador2.getTablero()[cuadro.getI()][cuadro.getJ()] = 1;
+                    tipoImagenResultado = jugador2.tresEnRaya(jugador1);
+                    resultado(tipoImagenResultado, TipoImagen.CIRCULO);
+                    jugadorActual = TipoImagen.EQUIS;
                     cambiarEstilos(TipoImagen.EQUIS);
                 }
-                
+
                 cuadro.setDibujado(true);
-                cuadro.repaint();
+                repaint();
+
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-               
+
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-               
+
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                
+
             }
         };
-        
+
         cuadro.addMouseListener(evento);
     }
-    
-    
+
     public void cambiarEstilos(TipoImagen jugadorActual) {
-        if(jugadorActual == TipoImagen.CIRCULO) {
+        if (jugadorActual == TipoImagen.CIRCULO) {
             FormTikTacToe.imagenJugadorEquis.setRuta(Ruta.JUGADORAUXILIAR);
             FormTikTacToe.imagenJugadorEquis.repaint();
-            FormTikTacToe.nombreJugadorEquis.setForeground(new Color(240,240, 240,100));
-            
+            FormTikTacToe.nombreJugadorEquis.setForeground(new Color(240, 240, 240, 100));
+
             FormTikTacToe.imagenJugadorCirculo.setRuta(Ruta.JUGADORCIRCULO);
             FormTikTacToe.imagenJugadorCirculo.repaint();
             FormTikTacToe.nombreJugadorCirculo.setForeground(new Color(255, 200, 255));
-        }else if(jugadorActual == TipoImagen.EQUIS) {
+        } else if (jugadorActual == TipoImagen.EQUIS) {
             FormTikTacToe.imagenJugadorCirculo.setRuta(Ruta.JUGADORAUXILIAR);
             FormTikTacToe.imagenJugadorCirculo.repaint();
-            FormTikTacToe.nombreJugadorCirculo.setForeground(new Color(240,240, 240,100));
-            
+            FormTikTacToe.nombreJugadorCirculo.setForeground(new Color(240, 240, 240, 100));
+
             FormTikTacToe.imagenJugadorEquis.setRuta(Ruta.JUGADOREQUIS);
             FormTikTacToe.imagenJugadorEquis.repaint();
             FormTikTacToe.nombreJugadorEquis.setForeground(new Color(180, 232, 255));
+        }
+    }
+
+    public void resultado(TipoImagen tipoImagenResultado, TipoImagen jugadorGanador) {
+        
+         
+        if (tipoImagenResultado == TipoImagen.EMPATE) {
+            System.out.println("Empate");
+        } else if (tipoImagenResultado != null) {
+            System.out.println("Hay un ganador");
+            
+            Ruta.cambiarRutas(jugadorGanador);
+            cuadroFrontal.setTipoImagen(tipoImagenResultado);
+            
         }
     }
 
@@ -154,9 +184,7 @@ public class Tablero extends JPanel{
     public void setJugadorActual(TipoImagen jugadorActual) {
         this.jugadorActual = jugadorActual;
     }
-    
-    
-    
+
     public ArrayList<Cuadro> getCuadros() {
         return cuadros;
     }
@@ -164,8 +192,6 @@ public class Tablero extends JPanel{
     public void setCuadros(ArrayList<Cuadro> cuadros) {
         this.cuadros = cuadros;
     }
-    
-    
 
     public int getAnchoCI() {
         return anchoCI;
@@ -222,6 +248,5 @@ public class Tablero extends JPanel{
     public void setJugador2(Jugador jugador2) {
         this.jugador2 = jugador2;
     }
-    
-    
+
 }
