@@ -9,7 +9,10 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.TimerTask;
 import javax.swing.JPanel;
+import java.util.Timer;
+import views.FormResultado;
 import views.FormTikTacToe;
 
 /**
@@ -23,8 +26,8 @@ public class Tablero extends JPanel {
     private int margen;
     private Color colorTablero;
     private Color colorCI;
-
     private TipoImagen jugadorActual;
+    private TipoImagen turnoPartida;
 
     private Jugador jugador1;
     private Jugador jugador2;
@@ -46,6 +49,7 @@ public class Tablero extends JPanel {
         jugador2 = new Jugador();
         cuadros = new ArrayList();
         jugadorActual = TipoImagen.EQUIS;
+        turnoPartida = TipoImagen.EQUIS;
     }
 
     public void crearTablero() {
@@ -168,12 +172,85 @@ public class Tablero extends JPanel {
          
         if (tipoImagenResultado == TipoImagen.EMPATE) {
             System.out.println("Empate");
+            
+            FormResultado formResultado = new FormResultado(TipoImagen.EMPATE, this);
+            formResultado.setVisible(true);
+            
+            Tablero tablero = this;
+            Timer timer = new Timer();
+            TimerTask tarea = new TimerTask() {
+                @Override
+                public void run() {
+                     FormResultado formResultado = new FormResultado(TipoImagen.EMPATE, tablero);
+                        formResultado.setVisible(true);
+                }
+            }; 
+            
+            
+            timer.schedule(tarea, 800);
         } else if (tipoImagenResultado != null) {
             System.out.println("Hay un ganador");
             
             Ruta.cambiarRutas(jugadorGanador);
             cuadroFrontal.setTipoImagen(tipoImagenResultado);
+            desactivarCuadros(true);
             
+           Tablero tablero = this;
+            Timer timer = new Timer();
+            TimerTask tarea = new TimerTask() {
+                @Override
+                public void run() {
+                     FormResultado formResultado = new FormResultado(jugadorGanador, tablero);
+                        formResultado.setVisible(true);
+                }
+            }; 
+            
+            
+            timer.schedule(tarea, 800);
+            
+            
+            
+        }
+    }
+    
+    public void reinicarTablero(TipoImagen ganador) {
+        desactivarCuadros(false);
+        borrarImagenes();
+        cuadroFrontal.setTipoImagen(null);
+        
+        if(ganador == TipoImagen.EQUIS) {
+            
+          int puntajeNuevo = Integer.parseInt(FormTikTacToe.puntajeEquis.getText()) + 1;
+          FormTikTacToe.puntajeEquis.setText(String.valueOf(puntajeNuevo));
+          
+        }else if(ganador == TipoImagen.CIRCULO) {
+            int puntajeNuevo = Integer.parseInt(FormTikTacToe.puntajeCirculo.getText()) + 1;
+            FormTikTacToe.puntajeCirculo.setText(String.valueOf(puntajeNuevo));
+          
+        }
+        if(turnoPartida == TipoImagen.EQUIS) {
+            jugadorActual = TipoImagen.CIRCULO;
+            turnoPartida = TipoImagen.CIRCULO;
+        }else if(turnoPartida == TipoImagen.CIRCULO) {
+            jugadorActual = TipoImagen.EQUIS;
+            turnoPartida = TipoImagen.EQUIS;
+        }
+        
+        cambiarEstilos(jugadorActual);
+        jugador1.limpiarTablero();
+        jugador2.limpiarTablero();
+        repaint();
+    }
+    
+    public void desactivarCuadros(boolean valor) {
+        for(Cuadro cuadro: cuadros) {
+            cuadro.setDibujado(valor);
+        }
+    }
+    
+    public void borrarImagenes() {
+        for(Cuadro cuadro: cuadros) {
+            cuadro.setTipoImagen(null);
         }
     }
 

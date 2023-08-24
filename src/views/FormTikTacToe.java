@@ -21,6 +21,8 @@ public class FormTikTacToe extends javax.swing.JFrame {
     public static Imagen imagenJugadorCirculo; 
     public static JLabel nombreJugadorEquis;
     public static JLabel nombreJugadorCirculo;
+    public static JLabel puntajeEquis;
+    public static JLabel puntajeCirculo;
     
     private Jugador jugador1;
     private Jugador jugador2;
@@ -36,6 +38,8 @@ public class FormTikTacToe extends javax.swing.JFrame {
         nombreJugadorEquis = lblNombreJ1;
         nombreJugadorCirculo = lblNombreJ2;
         
+        puntajeEquis = lblPuntajeJ1;
+        puntajeCirculo = lblPuntajeJ2;
         tablero.cambiarEstilos(TipoImagen.EQUIS);
         
         lblNombreJ1.setText(jugador1.getNombre());
@@ -47,6 +51,8 @@ public class FormTikTacToe extends javax.swing.JFrame {
         initComponents();
         setResizable(false);
         setLocationRelativeTo(null);
+        panelBackground.setOpaque(false);
+        setBackground(new Color(0,0,0,0));
         
         tablero = new Tablero();
         tablero.setJugador1(jugador1);
@@ -68,7 +74,7 @@ public class FormTikTacToe extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelBackground = new javax.swing.JPanel();
+        panelBackground = new controller.PanelRedondeado();
         lblCierre = new javax.swing.JLabel();
         jugadorCirculo = new controller.Imagen();
         jugadorEquis = new controller.Imagen();
